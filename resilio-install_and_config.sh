@@ -2,6 +2,8 @@
 # Author;
 # License:
 
+
+
 # truquillos para construir el script
 # $HOME $USER
 #
@@ -11,6 +13,11 @@
 # function
 # $(date +%H%M) - means "substitute the output from the date +%H%M command here.
 
+# Checks if the user running the script is root
+if (( $EUID != 0 )); then
+    echo "Please run as root (change your user to root by using 'su' or try 'sudo' )"
+    exit
+fi
 
 echo '*** Validating requirements ***'
 echo 'This script is intented for x86_64 machines'
