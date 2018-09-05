@@ -1,5 +1,5 @@
 # resilio-sync-uar
-Get resilio sync Up and Running (UAR) on your opensuse computer.
+Get Resilio Sync Home (https://www.resilio.com/individuals/) Up and Running (UAR) on your opensuse computer.
 
 Script for install, configure and run resilio-sync on opensuse.
 
