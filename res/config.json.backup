@@ -1,0 +1,16 @@
+{
+    // "listening_port" : 0, para luego ponerlo en el firewall - 0 aleatorio
+    //"storage_path" : "/varios/rslsync/tmp/",
+    //"pid_file" : "/varios/rslsync/tmp/sync.pid",
+
+    "storage_path" : "{HOME}/.config/resilio-sync/storage",
+    "pid_file" : "{HOME}/.config/resilio-sync/sync.pid",
+
+    "webui" :
+    {
+        "listen" : "127.0.0.1:8888"
+        ,"force_https" : true
+      //  ,"ssl_certificate" : "/path/to/cert.pem"
+      //  ,"ssl_private_key" : "/path/to/private.key"
+    }
+}
