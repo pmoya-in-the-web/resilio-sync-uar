@@ -11,3 +11,5 @@
 # namely rslsync. Note that -R (recursive) flag must come before -m (modify)
 #  flag, which is immediately followed by the access control list entry
 # (u:rslsync:rwx).
+
+# grant-persmisions-to-shared-directories
