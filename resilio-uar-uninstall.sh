@@ -1,7 +1,19 @@
+#!/bin/sh
+# Author; pmoya-in-the-web
+# License:
 
 # script ejemplo https://github.com/duckinator/signal-desktop-rpm/blob/master/build-rpm.sh
 
+# Checks if the user running the script is root
+if [ $EUID != 0 ];
+  then
+    echo -e "\e[1;31mPlease run as root (try using 'su' or 'sudo' )'\e[0m"
+    exit 1
+  else
+    echo 'Script is runned by "root" user'
+fi
 
+# Variables definition
 _RESILIO_USER_HOME_DIR_CONFIG=$_RESILIO_USER_HOME_DIR'/.config/resilio-sync'
 _RESILIO_CONFIG_DIR='/etc/resilio-sync'
 _RESILIO_SERVICE_DIR='/lib/systemd/system'
@@ -18,7 +30,7 @@ echo 'Removing resilio-sync service'
   systemctl disable resilio-sync
 
   # Remove resilio-sync software package
-  zypper rm resilio
+  zypper --non-interactive rm resilio-sync
 
   # Remove resilio repository
   zypper rr resilio
@@ -28,7 +40,7 @@ echo 'Removing resilio-sync service'
 )
 
 # Remove files owned by user ? find / -user rslsync - find / -group rslsync
-# ToDo: ojo no me vaya a cargar los ficheros compartidos
+# ToDo: Beware not to delete shared files
 
 # Remove configuration directory
 echo 'Removing '$_RESILIO_CONFIG_DIR' directory and service configuration backup files'
@@ -40,5 +52,3 @@ echo 'Removing '$_RESILIO_USER' user and its home directory'
 userdel -rf $_RESILIO_USER
 echo 'Removing '$_RESILIO_GROUP' group'
 groupdel -f $_RESILIO_GROUP
-
-exit 0

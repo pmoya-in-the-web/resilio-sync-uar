@@ -1,3 +1,7 @@
+#!/bin/sh
+# Author; pmoya-in-the-web
+# License:
+
 # ToDo: Asignar permisos a rslsync sobre los directorios que vayamos a modificar
 # parámetroso como comando linux grant y remove o en dos scripts
 #
@@ -13,3 +17,6 @@
 # (u:rslsync:rwx).
 
 # grant-persmisions-to-shared-directories
+
+# find directories
+#   getfacl -Rs /varios | awk -v RS= '/\nuser:rslsync:rwx\n/ {sub(/\n.*/, ""); sub(/^[^:]*: /, ""); print}'
