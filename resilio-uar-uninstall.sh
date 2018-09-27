@@ -1,8 +1,4 @@
 #!/bin/sh
-# Author; pmoya-in-the-web
-# License:
-
-# script ejemplo https://github.com/duckinator/signal-desktop-rpm/blob/master/build-rpm.sh
 
 # Checks if the user running the script is root
 if [ $EUID != 0 ];
@@ -14,15 +10,13 @@ if [ $EUID != 0 ];
 fi
 
 # Variables definition
-_RESILIO_USER_HOME_DIR_CONFIG=$_RESILIO_USER_HOME_DIR'/.config/resilio-sync'
-_RESILIO_CONFIG_DIR='/etc/resilio-sync'
-_RESILIO_SERVICE_DIR='/lib/systemd/system'
-_RESILIO_USER=rslsync
-_RESILIO_GROUP=rslsync
+RESILIO_USER_HOME_DIR_CONFIG=$RESILIO_USER_HOME_DIR'/.config/resilio-sync'
+RESILIO_CONFIG_DIR='/etc/resilio-sync'
+RESILIO_SERVICE_DIR='/lib/systemd/system'
+RESILIO_USER=rslsync
+RESILIO_GROUP=rslsync
 
-
-
-echo 'Removing resilio-sync service'
+echo 'Removing resilio-sync instalation'
 ( set -x;
   # Stop service
   systemctl stop resilio-sync
@@ -36,19 +30,17 @@ echo 'Removing resilio-sync service'
   zypper rr resilio
 
   # Remove repository key
-  # ToDo: rpm --import
+  RESILIO_PUBKEY=`rpm -qa gpg-pubkey \* --qf "%{version}-%{release} %{summary}\n" | grep -i resilio | cut -d ' ' -f 1`
+  sudo rpm -e --allmatches gpg-pubkey-$RESILIO_PUBKEY
 )
 
-# Remove files owned by user ? find / -user rslsync - find / -group rslsync
-# ToDo: Beware not to delete shared files
-
 # Remove configuration directory
-echo 'Removing '$_RESILIO_CONFIG_DIR' directory and service configuration backup files'
-rm -r $_RESILIO_CONFIG_DIR
-rm $_RESILIO_SERVICE_DIR'/resilio-sync.service.bak'
+echo 'Removing '$RESILIO_CONFIG_DIR' directory and service configuration backup files'
+rm -r $RESILIO_CONFIG_DIR
+rm $RESILIO_SERVICE_DIR'/resilio-sync.service.bak'
 
 # Remove user (remove home dir & force)
-echo 'Removing '$_RESILIO_USER' user and its home directory'
-userdel -rf $_RESILIO_USER
-echo 'Removing '$_RESILIO_GROUP' group'
-groupdel -f $_RESILIO_GROUP
+echo 'Removing '$RESILIO_USER' user and its home directory'
+userdel -rf $RESILIO_USER
+echo 'Removing '$RESILIO_GROUP' group'
+groupdel -f $RESILIO_GROUP
