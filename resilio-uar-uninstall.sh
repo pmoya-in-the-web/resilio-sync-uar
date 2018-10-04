@@ -28,11 +28,12 @@ echo 'Removing resilio-sync instalation'
 
   # Remove resilio repository
   zypper rr resilio
-
-  # Remove repository key
-  RESILIO_PUBKEY=`rpm -qa gpg-pubkey \* --qf "%{version}-%{release} %{summary}\n" | grep -i resilio | cut -d ' ' -f 1`
-  sudo rpm -e --allmatches gpg-pubkey-$RESILIO_PUBKEY
 )
+
+echo 'Removing public key from storage'
+# Remove repository key
+RESILIO_PUBKEY=`rpm -qa gpg-pubkey \* --qf "%{version}-%{release} %{summary}\n" | grep -i resilio | cut -d ' ' -f 1`
+sudo rpm -e --allmatches gpg-pubkey-$RESILIO_PUBKEY
 
 # Remove configuration directory
 echo 'Removing '$RESILIO_CONFIG_DIR' directory and service configuration backup files'

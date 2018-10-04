@@ -1,5 +1,18 @@
 #!/bin/sh
 
+# ToDo: ¡¡¡ error de concepto, rslsync crea los ficheros con su usuario y grupo
+# probar máscara a ver si aplica a crearlos con el ACL y usuario y grupo pablo users
+# https://unix.stackexchange.com/questions/324341/let-a-process-read-and-write-all-files-inside-a-certain-directory-at-any-depth
+# Para permitir que todos los archivos o directorios hereden las entradas de ACL desde el directorio con:
+# setfacl -dm "entry" <dir>
+# https://unix.stackexchange.com/questions/99079/setting-default-username-and-group-for-files-in-directory
+
+# ¿? probar aproximación;
+# 1. "rslsync" user pertenece a users
+# 2. servicio se inicia como usuario "rslsync" y "users" de grupo
+# 3. grant da permisos rwX al grupo "users" (igual también en servicio o no hace falta depende de la máscara
+# 4. ¿hace falta un cron para actualizar los directorios de vez en cuando con los permisos?
+#
 # ToDo: change owner and group from rslsync to user
 
 ACTION=$1
@@ -14,7 +27,7 @@ if [[ "--help" == "$1" ]]; then
   echo " -rm        Remove ACL rwx permissions for rslsync user or group"
   echo ""
   echo " directory  Directory to apply permissions (recursively) "
-  exit 1
+  exit 0
 fi
 
 echo 'Checking if "'$DIR'" exist'
@@ -24,7 +37,7 @@ else
   if [[ -f "$DIR" ]]; then
     echo 'File exists'
   else
-    echo 'It is NOT a directory nor file'
+    echo -e 'It is NOT a directory nor file'
     exit 1
   fi
 fi
@@ -47,8 +60,8 @@ case "$ACTION" in
     setfacl -R -x group:rslsync $DIR
     ;;
   *)
-    echo "Usage: $0 -{find|add|rm} {directory}"
-    echo "Try with --help option to get more info"
+    echo -e "Usage: $0 -{find|add|rm} {directory}"
+    echo -e "Try with --help option to get more info"
     exit 1
 esac
 
