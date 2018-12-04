@@ -54,8 +54,16 @@ else
   if [[ -z $RESILIO_GROUP ]];
   then
     echo -e 'You must specify a valid existing group'
+    exit 1
   fi
 fi
+# ToDo: User and group must be present in the system or be rslsync:rslsync
+# if [ `id -u $RESILIO_USER 2>/dev/null || echo -1` -ge 0 ]; then
+# echo FOUND
+# fi
+#
+# For user  (>0 user exists)=> getent passwd $RESILIO_USER | grep -c .
+# For group (>0 user exists)=> getent passwd $RESILIO_GROUP | grep -c .
 
 # Specify a device name for this computer
 # ToDo: add as param, if not specified use hostname
@@ -70,10 +78,11 @@ fi
 RESILIO_REPO_KEY='https://linux-packages.resilio.com/resilio-sync/key.asc'
 RESILIO_REPO_X86_64='https://linux-packages.resilio.com/resilio-sync/rpm/x86_64'
 RESILIO_PACKAGE_NAME='resilio-sync'
-#RESILIO_USER='rslsync'
-#RESILIO_GROUP='rslsync'
+
+# ToDo: deal with specified user home dir
 RESILIO_USER_HOME_DIR='/home/rslsync'
 RESILIO_USER_HOME_DIR_4SED='\/home\/rslsync'
+
 RESILIO_USER_HOME_DIR_CONFIG=$RESILIO_USER_HOME_DIR'/.config/resilio-sync'
 RESILIO_CONFIG_DIR='/etc/resilio-sync'
 RESILIO_SERVICE_DIR='/lib/systemd/system'
@@ -94,7 +103,6 @@ zypper ar -cfp 90 $RESILIO_REPO_X86_64 resilio
 # Install resilio package
 echo 'Installing '$RESILIO_PACKAGE_NAME' package'
 zypper --non-interactive --no-gpg-checks install $RESILIO_PACKAGE_NAME
-
 echo '*** Installation finished ***'
 # rslsync user and group should have been created.
 
@@ -105,7 +113,7 @@ echo '*** Generation of own certificates and move to user config directory ***'
 # Generate own certificates
 
 echo 'Generating ssl key and certificate'
-# Genera un certificados y claves (duración en días -days)
+# Generates key and cert (expires in 3650 days)
 # openssl req -newkey rsa:4096 -nodes -keyout $RESILIO_SSL_PRIVATE_KEY_FILE -x509 -days 3650 -out $RESILIO_SSL_CERT_FILE
 openssl req -newkey rsa:4096 -nodes -keyout $RESILIO_SSL_PRIVATE_KEY_FILE -x509 -days 3650 -out $RESILIO_SSL_CERT_FILE -subj "/C=XX/ST=Resilio Sync/L=mine/O=Me & Myself/OU=Myself/CN=myself.none"
 
