@@ -80,8 +80,8 @@ RESILIO_REPO_X86_64='https://linux-packages.resilio.com/resilio-sync/rpm/x86_64'
 RESILIO_PACKAGE_NAME='resilio-sync'
 
 # ToDo: deal with specified user home dir
-RESILIO_USER_HOME_DIR='/home/rslsync'
-RESILIO_USER_HOME_DIR_4SED='\/home\/rslsync'
+RESILIO_USER_HOME_DIR='/home/'$RESILIO_USER
+RESILIO_USER_HOME_DIR_4SED='\/home\/'$RESILIO_USER
 
 RESILIO_USER_HOME_DIR_CONFIG=$RESILIO_USER_HOME_DIR'/.config/resilio-sync'
 RESILIO_CONFIG_DIR='/etc/resilio-sync'
@@ -89,6 +89,9 @@ RESILIO_SERVICE_DIR='/lib/systemd/system'
 RESILIO_SSL_PRIVATE_KEY_FILE='private.key'
 RESILIO_SSL_CERT_FILE='cert.pem'
 
+# Installation day (for config backup files)
+# ToDo: Use this variable for backup files such as config.json
+INSTALL_DATE=`date +%Y-%m-%d`
 
 echo
 echo
@@ -156,12 +159,20 @@ echo 'Configuration config.json finished'
 echo
 echo
 echo 'Configuring '$RESILIO_SERVICE_DIR'resilio-sync.service'
-# Change .pid file location
-sed -i.bak -e 's/PIDFile.*/PIDFile='\"$RESILIO_USER_HOME_DIR_4SED'\/.resilio-sync\/sync.pid\"/g' $RESILIO_SERVICE_DIR'/resilio-sync.service'
-# Change the user and group running the service (and ownership when sharing files)
-sed -i -e 's/User.*/User='\"$RESILIO_USER'\/.resilio-sync\/sync.pid\"/g' $RESILIO_SERVICE_DIR'/resilio-sync.service'
-sed -i -e 's/Group.*/Group='\"$RESILIO_GROUPD'\/.resilio-sync\/sync.pid\"/g' $RESILIO_SERVICE_DIR'/resilio-sync.service'
-sed -i -e 's/ExecStartPre.*/ExecStartPre=/bin/chown -R '\"$RESILIO_USER':'$RESILIO_GROUP' /var/run/resilio-sync/g' $RESILIO_SERVICE_DIR'/resilio-sync.service'
+#( set -x;
+    # Change .pid file location
+    sed -i.bak -e 's/PIDFile.*/PIDFile='$RESILIO_USER_HOME_DIR_4SED'\/.resilio-sync\/sync.pid/g' $RESILIO_SERVICE_DIR'/resilio-sync.service'
+    # Change the user and group running the service (and ownership when sharing files)
+
+     sed -i -e 's/User.*/User='$RESILIO_USER'/g' $RESILIO_SERVICE_DIR'/resilio-sync.service'
+     sed -i -e 's/Group.*/Group='$RESILIO_GROUP'/g' $RESILIO_SERVICE_DIR'/resilio-sync.service'
+
+     sed -i -e 's/Environment="SYNC_USER.*/Environment="SYNC_USER='$RESILIO_USER'\"/g' $RESILIO_SERVICE_DIR'/resilio-sync.service'
+     sed -i -e 's/Environment="SYNC_GROUP.*/Environment="SYNC_GROUP='$RESILIO_GROUP'\"/g' $RESILIO_SERVICE_DIR'/resilio-sync.service'
+     
+     
+     #sed -i -e 's/ExecStartPre.*/ExecStartPre="\/bin\/chown -R '$RESILIO_USER':'$RESILIO_GROUP' \/var\/run\/resilio-sync"/g' $RESILIO_SERVICE_DIR'/resilio-sync.service'
+#)
 # ToDo: give the chance to define your own user or rslsync user.
 # if it is your own user is easier but has to add to (check if group users is needed)
 # if it is own user maybe rslsync user creation is not needed
@@ -182,5 +193,5 @@ echo '* Resilio service running as '$RESILIO_USER' user and '$RESILIO_GROUP' gro
 echo '* Home user directory; '$RESILIO_USER_HOME_DIR
 echo '* Configuration file; '$RESILIO_CONFIG_DIR'/config.json'
 echo '* Configuration file backup; '$RESILIO_CONFIG_DIR'/config.json.bak'
-echo '* Service configuration file; ' $RESILIO_SERVICE_DIR'/resilio-sync-service'
+echo '* Service configuration file; ' $RESILIO_SERVICE_DIR'/resilio-sync.service'
 echo 'Try https://127.0.0.1/8888 to acess WebUI (first time access need to define user and password)'
